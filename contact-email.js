@@ -1,12 +1,13 @@
 var express = require("express");
 var bodyParser = require("body-parser");
-var request = require('request');
-var fs = require('fs');
+var cors = require('cors');
 var app = express();
 app.use(bodyParser.json());
 var nodemailer = require('nodemailer');
-
-   function enviar(destinatario,asunto,mensaje){
+app.use(cors({
+    origin: 'http://localhost:4200'
+  }));
+   function enviar(destinatario,asunto){
         let remitente ='arquipruebas86@gmail.com';
         let transporter = nodemailer.createTransport({
            service: 'gmail',
@@ -20,7 +21,7 @@ var nodemailer = require('nodemailer');
             from: remitente,
             to: destinatario,
             subject: asunto,
-            text: mensaje
+            text: "Su consulta fue recibida correctamente"
         };
         transporter.sendMail(mailOptions, function(error, info){
             if(error){
@@ -32,7 +33,7 @@ var nodemailer = require('nodemailer');
     }
 
  app.post('/contactForm',function(req,res){
-    enviar(req.body.destinatario,req.body.asunto,req.body.mensaje)
+    enviar(req.body.destinatario,req.body.asunto)
     res.send("Mensaje enviado exitosamente");
   
 });
